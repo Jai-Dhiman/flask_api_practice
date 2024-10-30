@@ -1,7 +1,10 @@
 from flask import Flask, request
+from flask_cors import CORS
 import db
 
+
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
 
 @app.route('/')
@@ -18,17 +21,21 @@ def show(id):
 
 @app.route("/photos.json", methods=["POST"])
 def create():
-    name = request.form.get("name")
-    width = request.form.get("width")
-    height = request.form.get("height")
-    return db.photos_create(name, width, height)
+    data = request.get_json()
+    name = data.get("name")
+    width = data.get("width")
+    height = data.get("height")
+    url = data.get("url")
+    return db.photos_create(name, width, height, url)
 
 @app.route("/photos/<id>.json", methods=["PATCH"])
 def update(id):
-    name = request.form.get("name")
-    width = request.form.get("width")
-    height = request.form.get("height")
-    return db.photos_update_by_id(id, name, width, height)
+    data = request.get_json() 
+    name = data.get("name")
+    width = data.get("width")
+    height = data.get("height")
+    url = data.get("url") 
+    return db.photos_update_by_id(id, name, width, height, url) 
 
 @app.route("/photos/<id>.json", methods=["DELETE"])
 def destroy(id):

@@ -20,7 +20,8 @@ def initial_setup():
           id INTEGER PRIMARY KEY NOT NULL,
           name TEXT,
           width INTEGER,
-          height INTEGER
+          height INTEGER,
+          url TEXT
         );
         """
     )
@@ -68,28 +69,29 @@ def photos_find_by_id(id):
     ).fetchone()
     return dict(row)
 
-def photos_create(name, width, height):
+def photos_create(name, width, height, url):
     conn = connect_to_db()
     row = conn.execute(
         """
-        INSERT INTO photos (name, width, height)
-        VALUES (?, ?, ?)
+        INSERT INTO photos (name, width, height, url)
+        VALUES (?, ?, ?, ?)
         RETURNING *
         """,
-        (name, width, height),
+        (name, width, height, url),
     ).fetchone()
     conn.commit()
     return dict(row)
 
-def photos_update_by_id(id, name, width, height):
+def photos_update_by_id(id, name, width, height, url):
     conn = connect_to_db()
     row = conn.execute(
         """
-        UPDATE photos SET name = ?, width = ?, height = ?
+        UPDATE photos 
+        SET name = ?, width = ?, height = ?, url = ?
         WHERE id = ?
         RETURNING *
         """,
-        (name, width, height, id),
+        (name, width, height, url, id),
     ).fetchone()
     conn.commit()
     return dict(row)
