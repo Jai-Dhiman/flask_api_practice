@@ -21,7 +21,8 @@ def initial_setup():
           name TEXT,
           width INTEGER,
           height INTEGER,
-          url TEXT
+          url TEXT,
+          body TEXT
         );
         """
     )
@@ -29,14 +30,12 @@ def initial_setup():
     print("Table created successfully")
 
     photos_seed_data = [
-        ("1st photo", 800, 400),
-        ("2nd photo", 1024, 768),
-        ("3rd photo", 200, 150),
+        ("Sample", 300, 300, "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fpreviews%2F021%2F433%2F017%2Foriginal%2Fsample-rubber-stamp-free-png.png&f=1&nofb=1&ipt=09b44fb34005e5676975629870b1d86d38853cf6b351f232039900c1791c3e0a&ipo=images", "Sample Body"),
     ]
     conn.executemany(
         """
-        INSERT INTO photos (name, width, height)
-        VALUES (?,?,?)
+        INSERT INTO photos (name, width, height, url, body)
+        VALUES (?,?,?,?,?)
         """,
         photos_seed_data,
     )
@@ -69,29 +68,29 @@ def photos_find_by_id(id):
     ).fetchone()
     return dict(row)
 
-def photos_create(name, width, height, url):
+def photos_create(name, width, height, url, body):
     conn = connect_to_db()
     row = conn.execute(
         """
-        INSERT INTO photos (name, width, height, url)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO photos (name, width, height, url, body)
+        VALUES (?, ?, ?, ?, ?)
         RETURNING *
         """,
-        (name, width, height, url),
+        (name, width, height, url, body),
     ).fetchone()
     conn.commit()
     return dict(row)
 
-def photos_update_by_id(id, name, width, height, url):
+def photos_update_by_id(id, name, width, height, url, body):
     conn = connect_to_db()
     row = conn.execute(
         """
         UPDATE photos 
-        SET name = ?, width = ?, height = ?, url = ?
+        SET name = ?, width = ?, height = ?, url = ?, body = ?
         WHERE id = ?
         RETURNING *
         """,
-        (name, width, height, url, id),
+        (name, width, height, url, id, body),
     ).fetchone()
     conn.commit()
     return dict(row)

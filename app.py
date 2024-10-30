@@ -26,7 +26,8 @@ def create():
     width = data.get("width")
     height = data.get("height")
     url = data.get("url")
-    return db.photos_create(name, width, height, url)
+    body = data.get("body")
+    return db.photos_create(name, width, height, url, body)
 
 @app.route("/photos/<id>.json", methods=["PATCH"])
 def update(id):
@@ -35,7 +36,8 @@ def update(id):
     width = data.get("width")
     height = data.get("height")
     url = data.get("url") 
-    return db.photos_update_by_id(id, name, width, height, url) 
+    body = data.get("body")
+    return db.photos_update_by_id(id, name, width, height, url, body) 
 
 @app.route("/photos/<id>.json", methods=["DELETE"])
 def destroy(id):
